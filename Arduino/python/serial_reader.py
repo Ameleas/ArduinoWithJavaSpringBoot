@@ -50,5 +50,4 @@ while True:
         print("Fel:", e)
 
     time.sleep(10)
-
     
