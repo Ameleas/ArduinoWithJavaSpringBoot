@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sensor Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .card {
+            background-color: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1{
+            color: #4CAF50;
+            text-align: center;
+        }
+        h3 {
+            color: #333;
+        }
+        .sensor-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        th, td{
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .no-data{
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+<h1>Iot Sensor Dashboard</h1>
+
+<!-- Senaste Data -->
+<div class="card">
+    <h3>Senaste Mätning</h3>
+    <div th:if="${latestTemp != null or latestHumidity != null}">
+        <p>Temperatur: <span class="sensor-value" th:text="${latestTemp != null ? latestTemp.value + '°C' : 'Ingen data'}">--</span></p>
+        <p>Luftfuktighet: <span class="sensor-value" th:text="${latestHumidity != null ? latestHumidity.value + '%' : 'Ingen data'}">--</span></p>
+        <p th:if="${latestDevice != null}">Enhet: <span th:text="${latestDevice.device_type}"></span></p>
+    </div>
+    <div th:unless="${latestTemp != null or latestHumidity != null}">
+        <p class="no-data">Ingen sensordata tillgänglig</p>
+    </div>
+</div>
+</body>
+</html>
