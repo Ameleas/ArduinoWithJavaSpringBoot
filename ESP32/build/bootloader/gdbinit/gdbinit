@@ -1,0 +1,2 @@
+source E:/Ouyangjing/IOT24/programmering/elektronic/Esp32s3WithSensor/build/bootloader/gdbinit/symbols
+source E:/Ouyangjing/IOT24/programmering/elektronic/Esp32s3WithSensor/build/bootloader/gdbinit/connect

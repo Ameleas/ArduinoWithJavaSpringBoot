@@ -1,0 +1,385 @@
+// #include <stdio.h>
+// #include <stdint.h>
+// #include <stdlib.h>
+// #include "esp_log.h"
+// #include "esp_err.h"
+// #include <math.h>
+// #include "hal/i2c_types.h"
+// #include "driver/i2c_master.h"
+// #include "freertos/FreeRTOS.h"
+// #include "freertos/task.h"
+// #include <stdbool.h>
+// #include <driver/i2c.h>
+
+
+
+// #define I2_SDA_GPIO GPIO_NUM_4
+// #define I2_SCL_GPIO GPIO_NUM_5
+// #define I2C_MASTER_FREQ_HZ         100000          // Frequency of the I2C bus
+// #define BME680_ADDRESS       0x77          
+// #define READ_BIT   I2C_MASTER_READ  /*!< I2C master read */
+// #define WRITE_BIT  I2C_MASTER_WRITE
+// #define ACK_CHECK_EN true
+
+// #define data_0 0x89
+// #define data_1 0X88
+// #define data_2 0X8A
+// #define data_3 0X8B
+// #define data_4 0X8C
+
+
+// static const char *TAG = "BME680";
+// i2c_master_dev_handle_t dev_handle;
+// i2c_master_bus_handle_t bus_handle;
+
+// int init_sensor(){
+
+//     i2c_master_bus_config_t i2c_mst_config = {
+//     .clk_source = I2C_CLK_SRC_DEFAULT,
+//     .i2c_port = I2C_NUM_0,
+//     .sda_io_num = I2_SDA_GPIO,
+//     .scl_io_num = I2_SCL_GPIO,
+//     .glitch_ignore_cnt = 7,
+//     .flags.enable_internal_pullup = true,
+//     };
+
+//  ESP_ERROR_CHECK(i2c_new_master_bus(&i2c_mst_config, &bus_handle));
+//     esp_err_t err = i2c_new_master_bus(&i2c_mst_config, &bus_handle);
+
+//     if (err != ESP_OK) {
+//         ESP_LOGE(TAG, "Failed to create I2C bus: %s", esp_err_to_name(err));
+    
+//     }
+
+//     i2c_device_config_t dev_cfg = {
+//         .dev_addr_length = I2C_ADDR_BIT_LEN_7,
+//         .device_address = BME680_ADDRESS,
+//         .scl_speed_hz = I2C_MASTER_FREQ_HZ,
+//     };
+ 
+
+//     err = i2c_master_bus_add_device(bus_handle, &dev_cfg, &dev_handle);
+//     ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle, &dev_cfg, &dev_handle));
+//     if (err != ESP_OK) {
+//             ESP_LOGE(TAG, "Failed to add I2C device: %s", esp_err_to_name(err));
+//             i2c_del_master_bus(bus_handle);  
+//             return err;
+//         }
+        
+//  ESP_ERROR_CHECK(i2c_master_probe(bus_handle, LM75_ADDRESS, -1));
+//     for (uint8_t addr = 0x03; addr <0x78; addr++) {
+        
+       
+//    ESP_LOGI(TAG, "Probing address 0x%02X", addr); // 打印当前探测的地址
+//     esp_err_t err = i2c_master_probe(bus_handle, addr, 1000 / portTICK_PERIOD_MS);
+//         if (err == ESP_OK) {
+//             ESP_LOGI(TAG, "Found device at address 0x%02X", addr);
+//         } 
+
+//     }
+
+//     ESP_LOGI(TAG, "Scan complete");
+// return ESP_OK;
+
+// }
+
+
+
+// float Raw_TemperatureData(int32_t *raw){
+
+//     uint8_t reg_addr=0x22;
+//     uint8_t buff[3] = {0};
+//     esp_err_t err = i2c_master_transmit_receive(dev_handle, &reg_addr, 1, buff, 3, -1);
+//     if (err != ESP_OK) {
+//         ESP_LOGE(TAG, "I2C read failed: %s", esp_err_to_name(err));
+//         return err;
+//     }
+
+//     int32_t raw_temp = (buff[0] << 12) | (buff[1] << 4) | (buff[2] >> 4);
+//  ESP_LOGI(TAG, "Temperature Calibration Data: buff0=0x%02X, buff1=0x%02X, buff2=0x%02X",
+//              buff[0], buff[1], buff[2]);
+    
+// int32_t t_fine;
+// float temperature;
+
+// 假设raw_temp是之前从寄存器0x22, 0x23, 0x24组合得到的20位原始温度数据
+// int32_t adc_temp = raw_temp;
+// 0x88-0x8D
+
+// int16_t dig_t1 =  (uint16_t)data_1 << 8 | data_0; // 从校准寄存器读取
+// int16_t dig_t2 = (uint16_t)data_3 << 8 | data_2; // 从校准寄存器读取
+// int16_t dig_t3 =   data_4; // 从校准寄存器读取
+
+// int32_t var1, var2;
+
+// var1 = (((adc_temp >> 3) - ((int32_t)dig_t1 << 1))) * ((int32_t)dig_t2) >> 11;
+// var2 = ((((adc_temp >> 4) - (int32_t)dig_t1) * ((adc_temp >> 4) - (int32_t)dig_t1)) >> 12) * (int32_t)dig_t3 >> 14;
+// t_fine = var1 + var2;
+// temperature = ((t_fine * 5 + 128) >> 8)/100.f;
+
+    
+    
+
+
+// return temperature;
+    
+// }
+
+
+
+
+// void app_main(void)
+// {
+
+//     /* Configure the peripheral according to the LED type */
+//     int32_t raw_data;
+//   init_sensor();
+//   while(true){
+//     Raw_TemperatureData(&raw_data);
+//     printf("Temperature: %.2f°C\n",  Raw_TemperatureData(&raw_data)); 
+//      vTaskDelay(pdMS_TO_TICKS(100));
+//   }
+// }
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include "esp_log.h"
+#include "esp_err.h"
+#include <math.h>
+#include "hal/i2c_types.h"
+#include "driver/i2c_master.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include <stdbool.h>
+#include <driver/i2c.h>
+
+// 定义标签用于日志
+static const char *TAG = "BME680";
+
+// 定义 I2C 引脚和配置
+#define I2_SDA_GPIO GPIO_NUM_4
+#define I2_SCL_GPIO GPIO_NUM_5
+#define I2C_MASTER_FREQ_HZ         50000          // I2C 总线频率
+#define BME680_ADDRESS       0x77           // BME680 I2C 地址，根据 SDO 引脚连接方式确定
+                                            // SDO 接地 (GND): 0x76
+                                            // SDO 接高电平 (VCC): 0x77
+
+// 定义校准寄存器地址
+#define CALIB_T1_LSB_REG  0x89  // T1 的低字节
+#define CALIB_T1_MSB_REG  0x88  // T1 的高字节
+#define CALIB_T2_LSB_REG  0x8A  // T2 的低字节
+#define CALIB_T2_MSB_REG  0x8B  // T2 的高字节
+#define CALIB_T3_REG      0x8C  // T3 的寄存器
+
+// 定义温度数据寄存器地址
+#define TEMP_MSB_REG  0x22
+ #define TEMP_LSB_REG  0x23
+ #define TEMP_XLSB_REG 0x24
+
+// 定义 I2C 设备句柄
+i2c_master_bus_handle_t bus_handle;
+i2c_master_dev_handle_t dev_handle;
+
+// 定义校准参数结构体
+typedef struct {
+    uint16_t T1;
+    int16_t T2;
+    int16_t T3;
+} bme680_calib_data_t;
+
+/**
+ * @brief 初始化 I2C 总线并添加 BME680 设备
+ * 
+ * @return esp_err_t ESP_OK 表示成功，其他表示错误
+ */
+esp_err_t init_sensor(void) {
+    // 配置 I2C 主总线
+    i2c_master_bus_config_t i2c_mst_config = {
+        .clk_source = I2C_CLK_SRC_DEFAULT,
+        .i2c_port = I2C_NUM_0,
+        .sda_io_num = I2_SDA_GPIO,
+        .scl_io_num = I2_SCL_GPIO,
+        .glitch_ignore_cnt = 7,
+        .flags.enable_internal_pullup = true,
+    };
+
+    esp_err_t err = i2c_new_master_bus(&i2c_mst_config, &bus_handle);
+    if (err != ESP_OK) {
+        ESP_LOGI(TAG, "Failed to create I2C bus: %s", esp_err_to_name(err));
+        return err;
+    }
+
+    // 配置 BME680 设备
+    i2c_device_config_t dev_cfg = {
+        .dev_addr_length = I2C_ADDR_BIT_LEN_7,
+        .device_address = BME680_ADDRESS,
+        .scl_speed_hz = I2C_MASTER_FREQ_HZ,
+    };
+
+    err = i2c_master_bus_add_device(bus_handle, &dev_cfg, &dev_handle);
+    if (err != ESP_OK) {
+        ESP_LOGI(TAG, "Failed to add I2C device: %s", esp_err_to_name(err));
+        i2c_del_master_bus(bus_handle);  // 删除总线句柄
+        return err;
+    }
+    for (uint8_t addr = 0x03; addr <0x78; addr++) {
+        
+       
+   // ESP_LOGI(TAG, "Probing address 0x%02X", addr); // 打印当前探测的地址
+    esp_err_t err = i2c_master_probe(bus_handle, addr, 1000 / portTICK_PERIOD_MS);
+        if (err == ESP_OK) {
+            ESP_LOGI(TAG, "Found device at address 0x%02X", addr);
+        } 
+
+    }
+    vTaskDelay(pdMS_TO_TICKS(10000));
+    ESP_LOGI(TAG, "BME680 initera Successful");
+    return ESP_OK;
+}
+
+/**
+ * @brief 从 BME680 读取校准参数 T1, T2, T3 并存储到结构体中
+ * 
+ * @param calib_data 指向 bme680_calib_data_t 结构体的指针，用于存储校准参数
+ * @return esp_err_t ESP_OK 表示成功，其他表示错误
+ */
+esp_err_t read_temperature_calibration(bme680_calib_data_t *calib_data) {
+    if (calib_data == NULL) {
+        ESP_LOGE(TAG, "校准数据指针为空");
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    // 缓冲区用于存储读取的5字节数据
+    uint8_t calib_buff[5] = {0};
+
+    // 定义要读取的起始寄存器地址
+    uint8_t reg_addr = CALIB_T1_LSB_REG;  // 0x88
+
+    // 使用 I2C 读取多个字节
+    esp_err_t err = i2c_master_transmit_receive(dev_handle, &reg_addr, 1, calib_buff, 5, 1000 / portTICK_PERIOD_MS);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "I2C 读取校准参数失败: %s", esp_err_to_name(err));
+        return err;
+    }
+
+    // 打印读取的校准数据（调试用）
+    ESP_LOGI(TAG, "Temperature Calibration Data: Byte0=0x%02X, Byte1=0x%02X, Byte2=0x%02X, Byte3=0x%02X, Byte4=0x%02X",
+             calib_buff[0], calib_buff[1], calib_buff[2], calib_buff[3], calib_buff[4]);
+
+    // 解析 T1 (0x88, 0x89)
+    calib_data->T1 = (uint16_t)((calib_buff[1] << 8) | calib_buff[0]);  // 小端序
+
+    // 解析 T2 (0x8A, 0x8B)
+    calib_data->T2 = (int16_t)((calib_buff[3] << 8) | calib_buff[2]);   // 小端序
+
+    // 解析 T3 (0x8C)
+    calib_data->T3 = (int16_t)calib_buff[4];
+
+    // 打印解析后的校准参数（调试用）
+    ESP_LOGI(TAG, "T1: %u", calib_data->T1);
+    ESP_LOGI(TAG, "T2: %d", calib_data->T2);
+    ESP_LOGI(TAG, "T3: %d", calib_data->T3);
+
+    return ESP_OK;
+}
+
+/**
+ * @brief 从 BME680 读取原始温度数据并转换为实际温度值
+ * 
+ * @param calib_data 指向 bme680_calib_data_t 结构体的指针，包含校准参数
+ * @param raw 温度数据指针，用于存储原始温度值（可选）
+ * @return float 实际温度值（单位：摄氏度）
+ */
+float read_raw_temperature(bme680_calib_data_t *calib_data, int32_t *raw) {
+    if (calib_data == NULL) {
+        ESP_LOGE(TAG, "校准数据指针为空");
+        return NAN; // 返回 NaN 表示错误
+    }
+
+    // 定义缓冲区用于存储读取的3字节数据
+    uint8_t buff[3] = {0};
+
+    // 定义要读取的起始寄存器地址
+    uint8_t reg_addr = TEMP_MSB_REG;  // 0x22
+
+    // 使用 I2C 读取多个字节
+    esp_err_t err = i2c_master_transmit_receive(dev_handle, &reg_addr, 1, buff, 3 ,-1);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "I2C 读取温度数据失败: %s", esp_err_to_name(err));
+        return NAN; // 返回 NaN 表示错误
+    }
+
+    // 打印读取的原始数据（调试用）
+   //ESP_LOGI(TAG, "Raw Temperature Data: MSB=0x%02X, LSB=0x%02X, XLSB=0x%02X", buff[0], buff[1], buff[2]);
+ESP_LOGI(TAG, "读取温度寄存器: 0x%02X=0x%02X, 0x%02X=0x%02X, 0x%02X=0x%02X",
+         TEMP_MSB_REG, buff[0], TEMP_LSB_REG, buff[1], TEMP_XLSB_REG, buff[2]);
+    // 组合原始温度数据
+    int32_t raw_temp = ((int32_t)buff[0] << 12) | ((int32_t)buff[1] << 4) | ((int32_t)buff[2] >> 4);
+
+    // 打印组合后的原始温度值（调试用）
+    ESP_LOGI(TAG, "Combined Raw Temperature Value: %ld", raw_temp);
+
+    // 将 raw_temp 传递给调用者（如果需要）
+    if (raw != NULL) {
+        *raw = raw_temp;
+    }
+
+    // 定义变量用于温度计算
+    int32_t var1, var2;
+    int32_t t_fine;
+    float temperature;
+
+    // 使用校准参数进行温度计算(严格按照BME680数据手册)
+    var1 = ((((raw_temp >> 3) - ((int32_t)calib_data->T1 << 1))) * ((int32_t)calib_data->T2)) >> 11;
+     var2 = ((((raw_temp >> 4) - (int32_t)calib_data->T1) * ((raw_temp >> 4) - (int32_t)calib_data->T1)) >> 12) * (int32_t)calib_data->T3 >> 14;
+    t_fine = var1 + var2;
+
+     
+    temperature = t_fine /100.0f;
+        // 打印计算后的温度值（调试用）
+    ESP_LOGI(TAG, "Temperature: %.2f °C", temperature);
+
+    return temperature;
+}
+
+/**
+ * @brief 主函数示例，展示如何初始化 I2C 并读取温度
+ * 
+ */
+void app_main(void)
+{
+    // 初始化传感器
+    esp_err_t err = init_sensor();
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "传感器初始化失败");
+        return;
+    }
+
+    // 定义变量用于存储校准参数
+    bme680_calib_data_t calib_data;
+
+    // 读取校准参数
+    while(true){
+    err = read_temperature_calibration(&calib_data);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "读取校准参数失败");
+        return;
+    }
+
+    // 定义变量用于存储原始温度数据
+    int32_t raw_temp;
+
+    // 读取原始温度数据并计算实际温度值
+    float temperature = read_raw_temperature(&calib_data, &raw_temp);
+
+    // 检查温度值是否为 NaN
+    if (isnan(temperature)) {
+        ESP_LOGE(TAG, "读取温度失败");
+    } else {
+        printf("Temperature: %.2f°C\n", temperature);
+    }
+      vTaskDelay(pdMS_TO_TICKS(1000));
+}
+}
+
+

@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "driver/gpio.h"
+#include "esp_log.h"
+#include "sdkconfig.h"
+#include "driver/i2c_master.h"
+#include "driver/gpio.h"
+#include "esp_wifi.h"
+#include "../driverutin/LM75_driver.h"
+#include "../driverutin/wifi_driver.h"
+#include <soc/i2c_periph.h>
+#include "../driverutin/https_request_driver.h"
+#include "driver/adc.h"
+#include "esp_crt_bundle.h"
+#include "../driverutin/HSS33P_driver.h"
+
+void app_main(void){
+    wifi_init_sta();
+    temp_sensor_t sensor= createTemperatorSensor();
+    sensor.init();
+    init_humidity();
+    // adc1_config_width(ADC_WIDTH_BIT_12); // 0-4095 range
+    // adc1_config_channel_atten(ADC1_CHANNEL_3, ADC_ATTEN_DB_11); // GPIO3
+    int16_t raw_data;
+    /*
+    const char *post_data=    "{"
+           "\"device_type\":\"ESP32S3\","
+           "\"sensors\":["
+             "{\"sensor_type\":\"temperature\",\"value\":26.5},"
+             "{\"sensor_type\":\"Humidity\",\"value\":60.8}"
+           "]"
+         "}";
+    //send_data_to_postman(post_data);*/
+ 
+
+    while(1){
+      printf("HELLO!");
+      
+    int temp=sensor.read_raw(&raw_data);
+    float celsius_temp = sensor.raw_to_celsius(temp);
+    //float humidity = adc1_get_raw(ADC1_CHANNEL_3); // Read raw ADC value
+    int humidity =  get_read_humidity();
+    
+    printf("Humidity: %d\n", humidity);
+    printf("Temperature: %.2f°C\n", celsius_temp); 
+ 
+      char new_data[200]; 
+       snprintf(new_data, sizeof(new_data),  "{"
+           "\"device_type\":\"ESP32S3\","
+           "\"sensors\":["
+             "{\"sensor_type\":\"temperature\",\"value\":%.1f},"
+             "{\"sensor_type\":\"Humidity\",\"value\":%d}"
+           "]"
+         "}",
+        celsius_temp,humidity);
+        
+        
+        send_data_to_postman(new_data); 
+           printf("HELLO-----!");
+         vTaskDelay(pdMS_TO_TICKS(2000)); 
+   
+    } 
+    
+}
