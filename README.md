@@ -5,7 +5,7 @@ Java Spring Boot-backend för att skicka och ta emot data.
 
 ## Innehåll
 
-- `Arduino` – Arduino-skisser/kod för att läsa sensorvärden och kommunicera med servern via serieport  
+- `Arduino` – Arduino-C kod och python för att läsa sensorvärden och kommunicera med servern via serieport  
 - `ESP32` – kod för ESP32-modulen för att läsa och skicka sensorvärden via Wi-Fi  
 - `JavaSpringBoot` – Spring Boot-applikation som exponerar REST-API och hanterar data  
 - `.vscode` – inställningar för Visual Studio Code  
