@@ -1,8 +1,12 @@
-#ifndef _SENSOR_H
-#define _SENSOR_H
-
-void analyzeSensorData(float temperatureC, int light);
-void tooSerialMonitor(float temperatureC, int light);
+#ifndef TMP36_H_
+#define TMP36_H_
 
 
-#endif
+void initAdc();
+void initUsart();
+void readTmp36();
+void readLDR();
+void printSensorValue();
+
+
+#endif /* TMP36_H_ */
