@@ -3,29 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <style>
-        input[type="submit"] {
-            font-size: 20px;      /* Gör texten större */
-            padding: 10px 20px;   /* Gör knappen större inuti */
-            background-color: #4CAF50; /* Valfri färg */
-            color: white;         /* Textfärg */
-            border: none;
-            border-radius: 5px;   /* Rundade hörn */
-            cursor: pointer;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #45a049; /* Effekt vid hover */
-        }
-    </style>
+    <link rel="stylesheet" href="/webstyle.css">
 </head>
 <body>
+<h1>Iot Sensor Dashboard</h1>
 
-<form action="showDevice" method="post">
-    <H2> VISA DATA FÖR </H2><br>
-    <input type="submit" value="ESP32">
-    <input type="submit" value="Arduino">
-</form>
+<div class="centered">
+    <form action="showDevice" method="post">
+        <H2> VISA DATA FÖR </H2><br>
+        <input type="submit" value="ESP32">
+        <input type="submit" value="Arduino">
+    </form>
+</div>
 
 </body>
 </html>

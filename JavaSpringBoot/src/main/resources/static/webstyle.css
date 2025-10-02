@@ -4,7 +4,6 @@ body {
     background-color: #f5f5f5;
 }
 .card {
-    text-align: center;
     background-color: white;
     padding: 20px;
     margin: 20px 0;
@@ -40,4 +39,22 @@ th {
 .no-data{
     color: #666;
     font-style: italic;
+}
+
+input[type="submit"] {
+    font-size: 20px;      /* Gör texten större */
+    padding: 10px 20px;   /* Gör knappen större inuti */
+    background-color: #4CAF50; /* Valfri färg */
+    color: white;         /* Textfärg */
+    border: none;
+    border-radius: 5px;   /* Rundade hörn */
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    background-color: #45a049; /* Effekt vid hover */
+}
+
+.centered {
+    text-align: center;
 }
